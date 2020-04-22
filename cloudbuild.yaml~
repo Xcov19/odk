@@ -1,0 +1,5 @@
+steps:
+- name: 'docker/compose:latest'
+  args: [‘build’]
+- name: 'docker/compose:latest'
+  args: ['up', '--no-start']

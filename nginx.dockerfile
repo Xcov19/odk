@@ -1,6 +1,7 @@
 FROM node:carbon as intermediate
 
 COPY ./ ./
+RUN git init
 RUN files/prebuild/write-version.sh
 RUN files/prebuild/build-frontend.sh
 

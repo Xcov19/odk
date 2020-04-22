@@ -1,0 +1,36 @@
+substitutions:
+  _DOCKER_COMPOSE_VERSION: 1.25.5
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+  - 'build'
+  - '--build-arg'
+  - 'DOCKER_COMPOSE_VERSION=${_DOCKER_COMPOSE_VERSION}'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/docker-compose:latest'
+  - '-t'
+  - 'gcr.io/$PROJECT_ID/docker-compose:${_DOCKER_COMPOSE_VERSION}'
+  - '.'
+- name: 'docker/compose:latest'
+  args: ['version']
+- name: 'docker/compose:latest'
+  args: ['build']
+  env:
+  - 'SSL_TYPE=selfsign'
+  - 'DOMAIN=local'
+  - 'SYSADMIN_EMAIL=akurnya@gmail.com'
+- name: 'docker/compose:latest'
+  args: ['up', '--no-start']
+  env:
+  - 'SSL_TYPE=selfsign'
+  - 'DOMAIN=local'
+  - 'SYSADMIN_EMAIL=akurnya@gmail.com'
+- name: 'docker/compose:latest'
+  args: ['up']
+  env:
+  - 'SSL_TYPE=selfsign'
+  - 'DOMAIN=local'
+  - 'SYSADMIN_EMAIL=akurnya@gmail.com'
+images:
+- 'gcr.io/${_PROJECT_ID}/odk:latest'
+tags: ['${_PROJECT_ID}-odk']
