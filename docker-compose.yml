@@ -1,4 +1,4 @@
-version: "3"
+version: "3.3"
 services:
   postgres:
     image: "postgres:9.6"
@@ -15,7 +15,7 @@ services:
       - ./files/dkim/config:/etc/exim4/_docker_additional_macros:ro
       - ./files/dkim/rsa.private:/etc/exim4/domain.key:ro
     environment:
-      - MAILNAME=${DOMAIN}
+      - MAILNAME=local
   service:
     container_name: service
     image: 'codecakes/service'
@@ -28,7 +28,7 @@ services:
     volumes:
       - ./data/target:/data/target/
     environment:
-      - DOMAIN=${DOMAIN}
+      - DOMAIN=local
     command: [ "./wait-for-it.sh", "postgres:5432", "--", "./start-odk.sh" ]
   nginx:
     container_name: nginx
@@ -39,9 +39,9 @@ services:
     depends_on:
       - service
     environment:
-      - SSL_TYPE=${SSL_TYPE}
-      - DOMAIN=${DOMAIN}
-      - CERTBOT_EMAIL=${SYSADMIN_EMAIL}
+      - SSL_TYPE=selfsign
+      - DOMAIN=local
+      - CERTBOT_EMAIL=akurnya@gmail.com
     ports:
       - "80:80"
       - "443:443"
@@ -52,4 +52,3 @@ services:
     image: 'yanokwa/pyxform-http:v0.3.0'
 volumes:
   transfer:
-
