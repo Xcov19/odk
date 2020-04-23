@@ -2,7 +2,8 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath --verbose
+      --out /home/akurnya/odk/komposed/
     kompose.version: 1.19.0 (f63a961c)
   creationTimestamp: null
   labels:
@@ -15,6 +16,7 @@ spec:
     metadata:
       annotations:
         kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+          --verbose --out /home/akurnya/odk/komposed/
         kompose.version: 1.19.0 (f63a961c)
       creationTimestamp: null
       labels:

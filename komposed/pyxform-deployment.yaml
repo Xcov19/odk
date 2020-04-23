@@ -2,12 +2,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath --verbose
+      --out /home/akurnya/odk/komposed/
     kompose.version: 1.19.0 (f63a961c)
   creationTimestamp: null
   labels:
-    io.kompose.service: nginx
-  name: nginx
+    io.kompose.service: pyxform
+  name: pyxform
 spec:
   replicas: 1
   strategy: {}
@@ -15,25 +16,15 @@ spec:
     metadata:
       annotations:
         kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+          --verbose --out /home/akurnya/odk/komposed/
         kompose.version: 1.19.0 (f63a961c)
       creationTimestamp: null
       labels:
-        io.kompose.service: nginx
+        io.kompose.service: pyxform
     spec:
       containers:
-      - env:
-        - name: CERTBOT_EMAIL
-        - name: DOMAIN
-        - name: SSL_TYPE
-        image: nginx
-        livenessProbe:
-          exec:
-            command:
-            - nc -z localhost 443 || exit 1
-        name: nginx
-        ports:
-        - containerPort: 80
-        - containerPort: 443
+      - image: yanokwa/pyxform-http:v0.3.0
+        name: pyxform
         resources: {}
       restartPolicy: Always
 status: {}

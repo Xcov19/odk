@@ -1,0 +1,226 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nginx
+  name: nginx
+  namespace: default
+spec:
+  ports:
+  - name: "80"
+    port: 80
+    targetPort: 80
+  - name: "443"
+    port: 443
+    targetPort: 443
+  selector:
+    io.kompose.service: nginx
+status:
+  loadBalancer: {}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: mail
+  name: mail
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: mail
+    spec:
+      containers:
+      - env:
+        - name: MAILNAME
+        image: itsissa/namshi-smtp:4.89-2.deb9u5
+        name: mail
+        resources: {}
+        volumeMounts:
+        - mountPath: /etc/exim4/_docker_additional_macros
+          name: mail-hostpath0
+          readOnly: true
+        - mountPath: /etc/exim4/domain.key
+          name: mail-hostpath1
+          readOnly: true
+      restartPolicy: Always
+      volumes:
+      - hostPath:
+          path: /home/akurnya/odk/home/akurnya/odk/files/dkim/config
+        name: mail-hostpath0
+      - hostPath:
+          path: /home/akurnya/odk/home/akurnya/odk/files/dkim/rsa.private
+        name: mail-hostpath1
+status: {}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: nginx
+  name: nginx
+  namespace: default
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: nginx
+    spec:
+      containers:
+      - env:
+        - name: CERTBOT_EMAIL
+        - name: DOMAIN
+        - name: SSL_TYPE
+        image: nginx
+        livenessProbe:
+          exec:
+            command:
+            - nc -z localhost 443 || exit 1
+        name: nginx
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}
+      restartPolicy: Always
+status: {}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: postgres
+  name: postgres
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: postgres
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_DATABASE
+          value: odk
+        - name: POSTGRES_PASSWORD
+          value: odk
+        - name: POSTGRES_USER
+          value: odk
+        image: postgres:9.6
+        name: postgres
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-hostpath0
+      restartPolicy: Always
+      volumes:
+      - hostPath:
+          path: /home/akurnya/odk
+        name: postgres-hostpath0
+status: {}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: pyxform
+  name: pyxform
+  namespace: default
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: pyxform
+    spec:
+      containers:
+      - image: yanokwa/pyxform-http:v0.3.0
+        name: pyxform
+        resources: {}
+      restartPolicy: Always
+status: {}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+    kompose.version: 1.19.0 (f63a961c)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: service
+  name: service
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose --file docker-compose.yml convert --volumes hostPath
+        kompose.version: 1.19.0 (f63a961c)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: service
+    spec:
+      containers:
+      - args:
+        - ./wait-for-it.sh
+        - postgres:5432
+        - --
+        - ./start-odk.sh
+        env:
+        - name: DOMAIN
+        image: service
+        name: service
+        resources: {}
+        volumeMounts:
+        - mountPath: /data/target/
+          name: service-hostpath0
+      restartPolicy: Always
+      volumes:
+      - hostPath:
+          path: /home/akurnya/odk/home/akurnya/odk/data/target
+        name: service-hostpath0
+status: {}
