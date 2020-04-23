@@ -102,7 +102,7 @@ spec:
         - name: CERTBOT_EMAIL
         - name: DOMAIN
         - name: SSL_TYPE
-        image: codecakes/nginx
+        image: nginx
         imagePullPolicy: ""
         livenessProbe:
           exec:
@@ -236,7 +236,7 @@ spec:
         - ./start-odk.sh
         env:
         - name: DOMAIN
-        image: codecakes/service
+        image: service:tag
         imagePullPolicy: ""
         name: service
         resources: {}
