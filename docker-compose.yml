@@ -49,6 +49,6 @@ services:
       test: [ "CMD-SHELL", "nc -z localhost 443 || exit 1" ]
   pyxform:
     container_name: pyxform
-    image: 'yanokwa/pyxform-http:v0.3.0'
+    image: 'yanokwa/pyxform-http:v1.0.0'
 volumes:
   transfer:
